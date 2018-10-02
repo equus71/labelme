@@ -550,7 +550,8 @@ class Canvas(QtWidgets.QWidget):
         if not len(self.shapes):
             return None
         nearest_vertex, distance = min(
-            ((vertex, labelme.utils.distanceSq(vertex - pos)) for shape in self.shapes for vertex in shape),
+            ((vertex, labelme.utils.distanceSq(vertex - pos)) for shape in self.shapes for vertex in shape if
+             self.isVisible(shape)),
             key=lambda vertex_distance: vertex_distance[1])
         return nearest_vertex if labelme.utils.sqrt(distance) < self.epsilon else None
 

@@ -71,6 +71,10 @@ def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
+def distanceSq(p):
+    return p.x() * p.x() + p.y() * p.y()
+
+
 def distancetoline(point, line):
     p1, p2 = line
     p1 = np.array([p1.x(), p1.y()])

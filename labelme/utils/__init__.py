@@ -20,5 +20,7 @@ from .qt import addActions
 from .qt import labelValidator
 from .qt import struct
 from .qt import distance
+from .qt import distanceSq
+from .qt import sqrt
 from .qt import distancetoline
 from .qt import fmtShortcut

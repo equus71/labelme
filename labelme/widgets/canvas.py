@@ -157,6 +157,9 @@ class Canvas(QtWidgets.QWidget):
         if self.drawing():
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
+                nearest_vertex = self.findNearestVertexTo(pos)
+                if nearest_vertex:
+                    self.overrideCursor(CURSOR_POINT)
                 return
 
             color = self.lineColor
@@ -172,6 +175,12 @@ class Canvas(QtWidgets.QWidget):
                 color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+            else:
+                nearest_vertex = self.findNearestVertexTo(pos)
+                if nearest_vertex:
+                    pos = nearest_vertex
+                    self.overrideCursor(CURSOR_POINT)
+
             if self.createMode == 'polygon':
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
@@ -299,6 +308,9 @@ class Canvas(QtWidgets.QWidget):
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
                     self.current = Shape()
+                    nearest_vertex = self.findNearestVertexTo(pos)
+                    if nearest_vertex:
+                        pos = nearest_vertex
                     self.current.addPoint(pos)
                     if self.createMode == 'point':
                         self.finalise()
@@ -530,6 +542,14 @@ class Canvas(QtWidgets.QWidget):
         self.setHiding(False)
         self.newShape.emit()
         self.update()
+
+    def findNearestVertexTo(self, pos):
+        if not len(self.shapes):
+            return None
+        nearest_vertex, distance = min(
+            ((vertex, labelme.utils.distanceSq(vertex - pos)) for shape in self.shapes for vertex in shape),
+            key=lambda vertex_distance: vertex_distance[1])
+        return nearest_vertex if labelme.utils.sqrt(distance) < self.epsilon else None
 
     def closeEnough(self, p1, p2):
         # d = distance(p1 - p2)

@@ -37,6 +37,7 @@ class Canvas(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop('epsilon', 11.0)
+        self.snap_to_existing_vertices = kwargs.pop('snap_to_existing_vertices', False)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -157,9 +158,10 @@ class Canvas(QtWidgets.QWidget):
         if self.drawing():
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
-                nearest_vertex = self.findNearestVertexTo(pos)
-                if nearest_vertex:
-                    self.overrideCursor(CURSOR_POINT)
+                if self.snap_to_existing_vertices:
+                    nearest_vertex = self.findNearestVertexTo(pos)
+                    if nearest_vertex:
+                        self.overrideCursor(CURSOR_POINT)
                 return
 
             color = self.lineColor
@@ -175,7 +177,7 @@ class Canvas(QtWidgets.QWidget):
                 color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            else:
+            elif self.snap_to_existing_vertices:
                 nearest_vertex = self.findNearestVertexTo(pos)
                 if nearest_vertex:
                     pos = nearest_vertex
@@ -308,9 +310,10 @@ class Canvas(QtWidgets.QWidget):
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
                     self.current = Shape()
-                    nearest_vertex = self.findNearestVertexTo(pos)
-                    if nearest_vertex:
-                        pos = nearest_vertex
+                    if self.snap_to_existing_vertices:
+                        nearest_vertex = self.findNearestVertexTo(pos)
+                        if nearest_vertex:
+                            pos = nearest_vertex
                     self.current.addPoint(pos)
                     if self.createMode == 'point':
                         self.finalise()

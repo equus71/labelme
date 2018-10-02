@@ -12,7 +12,8 @@ validate_label: null
 show_label_text_field: true
 label_completion: startswith
 
-epsilon: 11.0
+epsilon: 3.0
+snap_to_existing_vertices: true
 
 shortcuts:
   close: Ctrl+W

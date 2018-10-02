@@ -145,6 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
+            snap_to_existing_vertices=self._config.get('snap_to_existing_vertices', True)
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
